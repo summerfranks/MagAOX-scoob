@@ -3,7 +3,13 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 source $DIR/../_common.sh
 set -euo pipefail
 
-sudo yum -y install nfs-utils
+source /etc/os-release
+if [[ $ID == ubuntu ]]; then
+	sudo apt -y install nfs-utils
+else
+	sudo yum -y install nfs-utils
+fi
+
 if [[ $MAGAOX_ROLE == RTC || $MAGAOX_ROLE == ICC ]]; then
     sudo systemctl enable nfs-server.service
     sudo systemctl start nfs-server.service

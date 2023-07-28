@@ -7,6 +7,8 @@ if [[ "$EUID" == 0 ]]; then
     exit 1
 fi
 
+source /etc/os-release
+
 if [[ -z $MAGAOX_ROLE ]]; then
     MAGAOX_ROLE=""
     echo "Choose the role for this machine"
@@ -69,6 +71,17 @@ DESIRED_CMDLINE="nosplash $NVIDIA_DRIVER_FIX $ALPAO_CMDLINE_FIX $PCIEXPANSION_CM
 
 if ! grep "$DESIRED_CMDLINE" /etc/default/grub; then
     echo GRUB_CMDLINE_LINUX_DEFAULT=\""$DESIRED_CMDLINE"\" | sudo tee -a /etc/default/grub
+	if command -v grub2-mkconfig > /dev/null; then
+		echo found grub2
+	else
+		echo grub2 not found; installing...
+		if [[ $ID == ubuntu ]]; then
+			sudo apt -y install grub2-common
+		else
+			sudo yum -y install grub2-common
+		fi
+	fi
+
     sudo grub2-mkconfig -o /boot/grub2/grub.cfg
     log_success "Applied kernel command line tweaks"
 fi
