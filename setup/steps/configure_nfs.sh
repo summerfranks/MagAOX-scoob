@@ -5,14 +5,19 @@ set -euo pipefail
 
 source /etc/os-release
 if [[ $ID == ubuntu ]]; then
-	sudo apt -y install nfs-common
+	sudo apt -y install nfs-kernel-server
 else
 	sudo yum -y install nfs-utils
 fi
 
 if [[ $MAGAOX_ROLE == RTC || $MAGAOX_ROLE == ICC ]]; then
-    sudo systemctl enable nfs-server.service
-    sudo systemctl start nfs-server.service
+	if [[ $ID == ubuntu ]]; then
+		sudo systemctl enable nfs-kernel-server
+		sudo systemctl start nfs-kernel-server
+	else
+		sudo systemctl enable nfs-server.service
+		sudo systemctl start nfs-server.service
+	fi
     cat <<'HERE' | sudo tee /etc/exports
 /data/logs      aoc(ro,sync,all_squash)
 /data/rawimages aoc(ro,sync,all_squash)
