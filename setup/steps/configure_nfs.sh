@@ -5,7 +5,7 @@ set -euo pipefail
 
 source /etc/os-release
 if [[ $ID == ubuntu ]]; then
-	sudo apt -y install nfs-utils
+	sudo apt -y install nfs-common
 else
 	sudo yum -y install nfs-utils
 fi
