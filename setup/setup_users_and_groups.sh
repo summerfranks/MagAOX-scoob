@@ -16,8 +16,8 @@ source $DIR/_common.sh
 source /etc/os-release
 
 if [[ $ID == ubuntu ]]; then
-	addgroup magaox
-	addgroup magaox-dev
+	$_REAL_SUDO addgroup magaox
+	$_REAL_SUDO addgroup magaox-dev
 else
 	creategroup magaox
 	creategroup magaox-dev
@@ -25,15 +25,15 @@ fi
 
 if [[ $MAGAOX_ROLE != vm ]]; then
   if [[ $ID == ubuntu ]]; then
-	adduser -G sudo xsup
-	adduser guestobs
+	$_REAL_SUDO adduser -G sudo xsup
+	$_REAL_SUDO adduser guestobs
   else
 	createuserxsup
 	createuser guestobs
   fi
   sudo passwd --lock guestobs  # SSH login still possible
   if [[ $ID == ubuntu ]]; then
-    addgroup guestobs
+    $_REAL_SUDO addgroup guestobs
   else
 	creategroup guestobs
   fi
