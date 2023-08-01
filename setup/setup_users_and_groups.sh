@@ -25,7 +25,7 @@ fi
 
 if [[ $MAGAOX_ROLE != vm ]]; then
   if [[ $ID == ubuntu ]]; then
-	$_REAL_SUDO adduser -G sudo xsup
+	$_REAL_SUDO adduser --group sudo xsup
 	$_REAL_SUDO adduser guestobs
   else
 	createuserxsup
