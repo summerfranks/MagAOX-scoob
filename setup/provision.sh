@@ -26,7 +26,7 @@ VM_WINDOWS_HOST=0
 if [[ -d /vagrant || -e /etc/wsl.conf || $CI == true ]]; then
     if [[ -d /vagrant || -e /etc/wsl.conf ]]; then
         if [[ -d /vagrant ]]; then
-            DIR="/vagrant/setup"
+            DIR="/vagrant/MagAOX-scoob/setup"
             VM_KIND=vagrant
         else
             VM_KIND=wsl
