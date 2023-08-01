@@ -13,15 +13,30 @@ else
   fi
 fi
 source $DIR/_common.sh
+source /etc/os-release
 
-creategroup magaox
-creategroup magaox-dev
+if [[ $ID == ubuntu ]]; then
+	addgroup magaox
+	addgroup magaox-dev
+else
+	creategroup magaox
+	creategroup magaox-dev
+fi
 
 if [[ $MAGAOX_ROLE != vm ]]; then
-  createuser xsup
-  createuser guestobs
+  if [[ $ID == ubuntu ]]; then
+	adduser -G sudo xsup
+	adduser guestobs
+  else
+	createuserxsup
+	createuser guestobs
+  fi
   sudo passwd --lock guestobs  # SSH login still possible
-  creategroup guestobs
+  if [[ $ID == ubuntu ]]; then
+    addgroup guestobs
+  else
+	creategroup guestobs
+  fi
   sudo gpasswd -d guestobs magaox || true  # prevent access for shenanigans
   sudo gpasswd -a guestobs guestobs || true
   sudo chown guestobs:guestobs /data/users/guestobs
@@ -29,10 +44,14 @@ if [[ $MAGAOX_ROLE != vm ]]; then
   if [[ -z $(groups | tr ' ' '\n' | grep 'guestobs$') ]]; then
     sudo gpasswd -a xsup guestobs
     log_success "Added xsup to group guestobs"
+  else
+    log_warning "Cannot add xsup to group guestobs"
   fi
 
   if sudo test ! -e /home/xsup/.ssh/id_ed25519; then
     $_REAL_SUDO -u xsup ssh-keygen -t ed25519 -N "" -f /home/xsup/.ssh/id_ed25519 -q
+  else
+    log_warning "Cannot generate xsup key"
   fi
   if ! grep -q magaox-dev /etc/pam.d/su; then
     cat <<'HERE' | sudo sed -i '/pam_rootok.so$/r /dev/stdin' /etc/pam.d/su
